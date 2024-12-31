@@ -2,6 +2,7 @@ from datetime import timedelta
 
 
 REFRESH_TOKEN_LIFETIME = timedelta(days=30)
+AUTH_HEADER_TYPES = ('Bearer',)
 
 AUTH_COOKIE = 'access_token'
 REFRESH_COOKIE = 'refresh_token'

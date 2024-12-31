@@ -47,9 +47,9 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.LoginRequiredMiddleware',
+    'users.authentication.CustoJWTAuthenticationMiddleware',
+    'users.authentication.CustomLoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -136,14 +136,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
-
 LOGIN_URL='refresh'
 
 SIMPLE_JWT = {
-    'REFRESH_TOKEN_LIFETIME': jwt.REFRESH_TOKEN_LIFETIME
+    'REFRESH_TOKEN_LIFETIME': jwt.REFRESH_TOKEN_LIFETIME,
+    'AUTH_HEADER_TYPES': jwt.AUTH_HEADER_TYPES,
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': []
 }

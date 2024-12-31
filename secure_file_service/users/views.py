@@ -5,12 +5,9 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework.response import Response
-from rest_framework.request import Request
 from secure_file_service.settings_modules import jwt    
 from secure_file_service import settings
 from rest_framework import status
-from rest_framework.decorators import api_view
-from django.contrib.auth.decorators import login_not_required
 
 # Create your views here.
 class LoginView(TokenObtainPairView):
@@ -19,8 +16,8 @@ class LoginView(TokenObtainPairView):
         token_response = super().post(request, *args, **kwargs)
         response = Response()
         response.set_cookie(
-            key=jwt.AUTH_COOKIE,
-            value=token_response.data["access"],
+            key= jwt.AUTH_COOKIE,
+            value = f"{jwt.AUTH_HEADER_TYPES[0]} {token_response.data["access"]}",
             httponly=jwt.HTTP_ONLY_COOKIE,
             secure=jwt.SECURE_COOKIE,
             samesite=jwt.SAME_SITE_COOKIE,
@@ -40,20 +37,29 @@ class RefreshView(TokenRefreshView):
     def get_refresh_token(self, request):
         return request.COOKIES.get(jwt.REFRESH_COOKIE)
     
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+    
     def post(self, request, *args, **kwargs):
 
         refresh_token = self.get_refresh_token(request)
         if(refresh_token is None):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        token_request = Request()
-        token_request.data.update({'refresh': refresh_token})
+        # token_request = Request()
+        # token_request.data.update({'refresh': refresh_token})
+        request.data.update({'refresh': refresh_token})
 
-        token_response = super().post(token_request, *args, **kwargs)
-        response = Response() if request.query_params.get('next', None) is None else HttpResponseRedirect(request.query_params.get('next'))
+        token_response = super().post(request, *args, **kwargs)
+        response = None
+        if request.query_params.get('next', None):
+            response = HttpResponseRedirect(request.query_params.get('next'))
+            response.status_code = status.HTTP_307_TEMPORARY_REDIRECT
+        else: 
+            response = Response()
         response.set_cookie(
             key=jwt.AUTH_COOKIE,
-            value=token_response.data["access"],
+            value = f"{jwt.AUTH_HEADER_TYPES[0]} {token_response.data["access"]}",
             httponly=jwt.HTTP_ONLY_COOKIE,
             secure=jwt.SECURE_COOKIE,
             samesite=jwt.SAME_SITE_COOKIE,
@@ -68,8 +74,3 @@ class RefreshView(TokenRefreshView):
                 path=reverse(settings.LOGIN_URL)
             )
         return response
-
-@login_not_required
-@api_view(['GET'])
-def protected_view(request):
-    return Response(data="Protected View", status=status.HTTP_200_OK)
