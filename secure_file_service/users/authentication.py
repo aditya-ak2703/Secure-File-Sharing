@@ -1,3 +1,6 @@
+import datetime
+import random
+import string
 import time
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -7,7 +10,7 @@ from django.contrib.auth.middleware import LoginRequiredMiddleware
 from rest_framework import status
 import jwt
 from secure_file_service.settings import SECRET_KEY
-from users.models import User
+from users.models import LoginOTP, User
 from django.contrib.auth.backends import ModelBackend
 
 HTTP_HEADER_ENCODING = 'iso-8859-1'
@@ -105,3 +108,31 @@ class CustomAuthenticatonBackend(ModelBackend):
         Checks if the user can authenticate
         """
         return super().user_can_authenticate(user) and user.email_verified
+    
+class LoginOPTGenerator:
+    """
+    A class to generate
+    """
+
+    opt_length = 6
+    expire_duration = 60 * 2
+
+    def generate_opt(self, user: User) -> str:
+        """
+        Generates an OTP for the given user
+        """
+        characters = string.digits
+        otp = ''.join(random.choice(characters) for _ in range(self.opt_length))
+        return otp
+
+    def refresh_opt(self, user: User):
+        login_otp = None
+        if(hasattr(user, 'loginotp')):
+            login_otp = user.loginotp
+        else:
+            login_otp = LoginOTP()
+            login_otp.user = user
+        login_otp.otp = self.generate_opt(user)
+        login_otp.expire_at = datetime.datetime.now() + datetime.timedelta(seconds=self.expire_duration)
+        login_otp.save()
+        return login_otp

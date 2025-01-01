@@ -15,7 +15,7 @@ def send_user_activation_email(user: User):
     token = UserActivationTokenGenerator().generate_token(user)
     send_mail(
         'Activate your account',
-        f'Click here to activate your account: {ORIGIN}users/activate/{token}',
+        f'Click here to activate your account: {ORIGIN}users/activate/{token}/',
         DEFAUT_SENDER,
         [user.email],
         fail_silently=True,
@@ -29,3 +29,15 @@ def user_post_save_handler(sender, instance, created, **kwargs):
     """
     if created:
         send_user_activation_email(instance)
+
+def send_login_opt(user: User, opt: str):
+    """
+    Sends an OTP to the user
+    """
+    send_mail(
+        'Login OTP',
+        f'Your OTP is: {opt}',
+        DEFAUT_SENDER,
+        [user.email],
+        fail_silently=False,
+    )
