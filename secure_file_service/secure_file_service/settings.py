@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from secure_file_service.settings_modules import jwt
+from secure_file_service.settings_modules import auth_settings
 from dotenv import load_dotenv
 import os
 
@@ -31,6 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['localhost']
+ORIGIN = os.environ.get('ORIGIN')
 
 
 # Application definition
@@ -57,6 +58,10 @@ MIDDLEWARE = [
     'users.authentication.CustomLoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'users.authentication.CustomAuthenticatonBackend',
 ]
 
 ROOT_URLCONF = 'secure_file_service.urls'
@@ -145,8 +150,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL='refresh'
 
 SIMPLE_JWT = {
-    'REFRESH_TOKEN_LIFETIME': jwt.REFRESH_TOKEN_LIFETIME,
-    'AUTH_HEADER_TYPES': jwt.AUTH_HEADER_TYPES,
+    'REFRESH_TOKEN_LIFETIME': auth_settings.REFRESH_TOKEN_LIFETIME,
+    'AUTH_HEADER_TYPES': auth_settings.AUTH_HEADER_TYPES,
 }
 
 REST_FRAMEWORK = {
@@ -155,6 +160,7 @@ REST_FRAMEWORK = {
 
 # default backend
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAUT_SENDER = 'admin.secure_file_service@localhost'
 
 if DEBUG == False:
     from secure_file_service.settings_prod import *
