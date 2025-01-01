@@ -1,0 +1,8 @@
+FROM python:3.13.1
+
+WORKDIR /usr/src/app
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+RUN pip install debugpy
+
+CMD python -m debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000

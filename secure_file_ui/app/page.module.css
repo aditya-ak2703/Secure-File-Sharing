@@ -1,0 +1,21 @@
+.left-side {
+    height: 100%;
+    flex-grow: 1;
+    border-right: 1px solid white;
+}
+
+.arrow-button {
+    display: inline-block;
+    padding: 6px;
+    width: 200px;
+    background: white !important;
+    color: black !important;
+    font-weight: 700 !important;
+}
+
+/* .arrow-button::after {
+    content: "";
+    border-top: 19px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-left: 1em solid white;
+} */

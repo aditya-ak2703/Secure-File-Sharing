@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+
+  secure_file_service:
+    build:
+      context: secure_file_service
+      dockerfile: dockerfile.local
+    volumes:
+      - ./secure_file_service/:/usr/src/app/
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  secure_file_ui:
+    build:
+      context: secure_file_ui
+      dockerfile: dockerfile.local
+    volumes:
+      - ./secure_file_ui/:/app/
+    ports:
+      - "3000:3000"
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: dockerfile.local
+    ports:
+      - "5001:80"
+      
