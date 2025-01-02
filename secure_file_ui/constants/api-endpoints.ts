@@ -1,3 +1,4 @@
+import { ftruncate } from "fs";
 
 const BASE_URL = '/api/';
 
@@ -17,8 +18,34 @@ export function getLoginEndpoint() {
     return `${USERS_BASE_URL}login/`;
 }
 
+export function getLogOutEndpoint() {
+    return `${USERS_BASE_URL}logout/`
+}
+
 export function getLoggedInUserEndpoint() {
     return `${USERS_BASE_URL}me/`;
 }
 
 //#endregion Users
+
+//#region  Files
+
+const FILE_BASE_URL = `${BASE_URL}files/`;
+
+export function getFileCreateEndpoint() {
+    return `${FILE_BASE_URL}file/`
+}
+
+export function getFileListEndpoint() {
+    return `${FILE_BASE_URL}files/`
+}
+
+export function getSharableFileCreateEndpoint() {
+    return `${FILE_BASE_URL}sharable-file/`;     
+} 
+
+export function getViewSharedFileEndpoint() {
+    return `${FILE_BASE_URL}view-shared-file/`;
+}
+
+//#endregion

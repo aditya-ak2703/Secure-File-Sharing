@@ -86,7 +86,7 @@ class LogoutView(CustomAPIView):
         )
         response.delete_cookie(
             key=auth_settings.REFRESH_COOKIE,
-            path=reverse(settings.LOGIN_URL)
+            path=settings.LOGIN_URL
         )
         return response
 

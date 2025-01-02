@@ -17,8 +17,8 @@ const userContextSlice = createSlice({
             state.initialized = true;
             state.user = action.payload;
         },
-        logIn(state, action: PayloadAction<{ user: User }>) {
-            state.user = action.payload.user;
+        logIn(state, action: PayloadAction<User>) {
+            state.user = action.payload;
         },
         logOut(state) { 
             state.user = null;

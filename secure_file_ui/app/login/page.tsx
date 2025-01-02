@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import ROUTES from "@/constants/routes";
 import LoginPrimaryForm from './LoginPrimaryForm';
 import LoginOTPForm from './LoginOTPForm';
+import { useAppDispatch } from "@/store/hooks";
+import { logIn } from "@/store/user-context/user-context.reducer";
 
 const validateUsername = (username: string) => {
     const usernameRegex = /^[A-Za-z0-9_]+$/;
@@ -29,6 +31,8 @@ export default function SignupPage() {
 
     const userRepository = useUserRepository();
     const router = useRouter();
+    const dispatch = useAppDispatch();
+
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,10 +86,10 @@ export default function SignupPage() {
         e.preventDefault();
         if(!validateOTPForm()) return;
 
-        // Handle form submission logic here
         try {
             const res = await userRepository.login(formData.username, formData.password, formData.otp);
-            console.log(res);
+            dispatch(logIn(res.user))
+            router.push(ROUTES.DASHBOARD);
         } catch (error: any) {
             setError(error?.message ?? "Failed to Log In");
             return;

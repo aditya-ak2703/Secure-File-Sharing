@@ -1,12 +1,8 @@
 import FullScreenSpinner from "@/common-ui/FullScreenSpinner";
-import ROUTES, { PUBLIC_ROUTES } from "@/constants/routes";
-import { useAuthUserRouteGuard } from "@/hooks/route-guard";
 import { useUserRepository } from "@/hooks/user.repository";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initializeUserContext } from "@/store/user-context/user-context.reducer";
 import { selectUserIsInitialized } from "@/store/user-context/user-context.selectors";
-import { CircularProgress } from "@mui/material";
-import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 /**
@@ -15,11 +11,8 @@ import { useEffect } from "react";
  */
 export default function UserInit({children}: {children: React.ReactNode}) {
     const dispatch = useAppDispatch();
-    const router = useRouter();
-    const pathname = usePathname();
     const isInitialized = useAppSelector(selectUserIsInitialized);
     const {getLoggedInUser} = useUserRepository();
-    const _ = useAuthUserRouteGuard();
 
     useEffect(() => {
         if(isInitialized) return;
@@ -29,11 +22,9 @@ export default function UserInit({children}: {children: React.ReactNode}) {
                 dispatch(initializeUserContext(user))
             } catch (error) {
                 dispatch(initializeUserContext(null));
-                if(PUBLIC_ROUTES.includes(pathname)) return;
-                router.push(ROUTES.LOGIN);
             }
         })();
-    }, [isInitialized, dispatch, getLoggedInUser, router, pathname]);
+    }, [isInitialized, dispatch, getLoggedInUser]);
 
     if(isInitialized) return children;
     return <FullScreenSpinner />

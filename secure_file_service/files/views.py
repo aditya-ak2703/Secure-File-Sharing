@@ -31,21 +31,9 @@ class FileListView(CustomAPIView):
 
 class SharableLinkView(CustomAPIView):
 
-    def get(self, request: Request):
-        sharable_link = SharableLink.objects.get(uuid = request.query_params.get('uuid'))
-        if sharable_link.expiry.timestamp() <= datetime.datetime.now().timestamp():
-            return Response(status = status.HTTP_401_UNAUTHORIZED)
-        file = sharable_link.parent_file
-        file_serialier = FilesSerializer(file)
-        sharable_link_serializer = SharableLinkSerializer(sharable_link)
-        return Response({
-            'file': file_serialier.data,
-            'sharable_link': sharable_link_serializer.data
-        })
-
     def post(self, request: Request):
         data = request.data
-        file = File.objects.get(id = data['parent_file'])
+        file = File.objects.get(id = data['parentFile'])
         if(file.owner.id == request.user.id):
             serializer = SharableLinkSerializer(data = data)
             if serializer.is_valid():
@@ -60,7 +48,7 @@ class SharedFileView(CustomAPIView):
         sharable_link = SharableLink.objects.get(uuid = request.query_params.get('uuid'))
         if sharable_link.expiry.timestamp() <= datetime.datetime.now().timestamp():
             return Response(status = status.HTTP_401_UNAUTHORIZED)
-        file = sharable_link.parent_file
+        file = sharable_link.parentFile
         file_serialier = FilesSerializer(file)
         sharable_link_serializer = SharableLinkSerializer(sharable_link)
         return Response({

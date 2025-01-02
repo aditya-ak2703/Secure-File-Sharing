@@ -53,6 +53,21 @@ export function useUserRepository() {
         return response.json();
     }, []);
 
+    const logout = useCallback(async function logout() {
+        const response = await fetch(apiEndpoints.getLogOutEndpoint(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to login');
+        }
+
+    }, []);
+
+
     const getLoggedInUser = useCallback(async function getLoggedInUser() {
         const response = await fetch(apiEndpoints.getLoggedInUserEndpoint(), {
             method: 'GET',
@@ -68,5 +83,5 @@ export function useUserRepository() {
         return response.json();
     }, []);
 
-    return {signup, generateOTP, login, getLoggedInUser};
+    return {signup, generateOTP, login, logout, getLoggedInUser};
 }

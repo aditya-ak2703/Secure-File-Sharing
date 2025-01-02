@@ -10,6 +10,7 @@ import { useRef } from 'react';
 import { AppStore, makeStore } from '@/store/store';
 import { Provider } from 'react-redux';
 import UserInit from './UserInit';
+import RouteGuard from './RouteGuard';
 
 const darkTheme = createTheme({
   palette: {
@@ -22,6 +23,7 @@ function StoreProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   if (!storeRef.current) {
     // Create the store instance the first time this renders
     storeRef.current = makeStore()
+    console.log(storeRef.current);
   }
 
   return <Provider store={storeRef.current}>{children}</Provider>
@@ -43,7 +45,9 @@ export default function RootLayout({
         <body>
           <StoreProvider>
             <UserInit>
-              {children}
+              <RouteGuard>
+                {children}
+              </RouteGuard>
             </UserInit>
           </StoreProvider>
         </body>
