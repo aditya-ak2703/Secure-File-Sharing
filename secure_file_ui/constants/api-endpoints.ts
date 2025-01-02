@@ -44,8 +44,8 @@ export function getSharableFileCreateEndpoint() {
     return `${FILE_BASE_URL}sharable-file/`;     
 } 
 
-export function getViewSharedFileEndpoint() {
-    return `${FILE_BASE_URL}view-shared-file/`;
+export function getViewSharedFileEndpoint(uuid: string) {
+    return `${FILE_BASE_URL}view-shared-file/?uuid=${uuid}`;
 }
 
 //#endregion

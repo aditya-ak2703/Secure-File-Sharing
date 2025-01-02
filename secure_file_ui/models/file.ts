@@ -4,3 +4,16 @@ export interface IFile {
     fileName: string;
     content: string;
 }
+
+export enum FILE_PERMISION {
+    VIEW = "VIEW",
+    DOWNLOAD = "DOWNLOAD",
+}
+
+export interface ISharableLink {
+    id: number;
+    permission: FILE_PERMISION;
+    expiry: string;
+    uuid: string;
+    parent_file: number;
+}
