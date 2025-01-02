@@ -16,7 +16,8 @@ export interface IFilesGridProps {
 }
 
 export default function FilesGrid({files}: IFilesGridProps) {
-    return <div className="flex flex-wrap gap-4 mt-6">
+
+    return <div className="flex flex-wrap gap-4 p-1 pt-6 flex-1 overflow-y-auto">
         {files.map((file, index) => <FileDisplay file={file} key={index} />)}
     </div>
 }

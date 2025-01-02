@@ -32,10 +32,10 @@ export default function DashboardPage() {
         setIsLoading(false);
     }
 
-    return <main>
+    return <main className="flex flex-col h-full overflow-hidden">
         {isLoading && <FullScreenSpinner />}
         <TopPanel />
-        <div className="p-4 pl-20">
+        <div className="p-4 pl-20 flex-1 flex flex-col items-start overflow-hidden">
             <Button 
                 startIcon = {<AddIcon />}
                 variant="contained"

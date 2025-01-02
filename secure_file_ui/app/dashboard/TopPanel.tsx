@@ -22,8 +22,8 @@ export default function TopPanel() {
     }
     
     return <>
-    <div className="flex h-20 items-center">
-        <Typography variant="h3">Secure File Sharing</Typography>
+    <div className="flex h-16 items-center">
+        <Typography variant="h4" className="pl-6">Secure File Sharing</Typography>
         <Button style={{"marginLeft": "auto", "marginRight": "40px"}} onClick={logoutHandler}>Log out</Button>
     </div>
     <hr></hr>
