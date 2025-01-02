@@ -1,6 +1,7 @@
 import datetime
+import json
 from math import exp
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -8,6 +9,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.response import Response
+from common.APIView import CustomAPIView
 from secure_file_service.settings_modules import auth_settings    
 from secure_file_service import settings
 from rest_framework import status
@@ -15,13 +17,13 @@ from rest_framework.views import APIView
 
 from users.authentication import LoginOPTGenerator, UserActivationTokenGenerator
 from users.business import send_login_opt
-from users.serializers import UserRegistrationSerializer
+from users.serializers import UserProfileSerializer, UserRegistrationSerializer
 from django.contrib.auth import authenticate
 
 
 # Create your views here.
 
-class GenerateOPTView(APIView):
+class GenerateOPTView(CustomAPIView):
     
     def post(self, request):
         user = authenticate(username=request.data['username'], password=request.data['password'])
@@ -48,7 +50,7 @@ class LoginView(TokenObtainPairView):
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
         
         data = serializer.validated_data
-        response = Response({'mesage': 'Login successful!'})
+        response = Response({'mesage': 'Login successful!', 'user': UserProfileSerializer(user).data})
         response.set_cookie(
             key= auth_settings.AUTH_COOKIE,
             value = f"{auth_settings.AUTH_HEADER_TYPES[0]} {data["access"]}",
@@ -62,11 +64,21 @@ class LoginView(TokenObtainPairView):
             httponly=auth_settings.HTTP_ONLY_COOKIE,
             secure=auth_settings.SECURE_COOKIE,
             samesite=auth_settings.SAME_SITE_COOKIE,
-            path=reverse(settings.LOGIN_URL)
+            path=settings.LOGIN_URL
         )
         return response
     
-class LogoutView(APIView):
+
+
+    
+
+class UserProfileView(CustomAPIView):
+
+    def get(self, request):
+        user = request.user
+        return Response(UserProfileSerializer(user).data)
+    
+class LogoutView(CustomAPIView):
     def post(self, request):
         response = Response()
         response.delete_cookie(
@@ -99,7 +111,7 @@ class RefreshView(TokenRefreshView):
         token_response = super().post(request, *args, **kwargs)
         response = None
         if request.query_params.get('next', None):
-            response = HttpResponseRedirect(request.query_params.get('next'))
+            response = HttpResponseRedirect(settings.PROXY_PREFIX + request.query_params.get('next'))
             response.status_code = status.HTTP_307_TEMPORARY_REDIRECT
         else: 
             response = Response()
@@ -121,7 +133,7 @@ class RefreshView(TokenRefreshView):
             )
         return response
 
-class UserRegistrationView(APIView):
+class UserRegistrationView(CustomAPIView):
 
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -130,7 +142,7 @@ class UserRegistrationView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserActivationView(APIView):
+class UserActivationView(CustomAPIView):
 
     def get(self, request, *args, **kwargs):
         user = UserActivationTokenGenerator().verify_token(kwargs['token'])

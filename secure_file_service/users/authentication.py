@@ -9,7 +9,7 @@ from secure_file_service.settings_modules import auth_settings
 from django.contrib.auth.middleware import LoginRequiredMiddleware
 from rest_framework import status
 import jwt
-from secure_file_service.settings import SECRET_KEY
+from secure_file_service.settings import PROXY_PREFIX, SECRET_KEY
 from users.models import LoginOTP, User
 from django.contrib.auth.backends import ModelBackend
 
@@ -51,7 +51,7 @@ class CustoJWTAuthenticationMiddleware():
         if(auth_response):
             user, token = auth_response
             if(user.email_verified):
-                request.user = auth_response[0]
+                request.user = user
             
         response = self.get_response(request)
 
@@ -67,7 +67,6 @@ class CustomLoginRequiredMiddleware(LoginRequiredMiddleware):
         res.status_code = status.HTTP_307_TEMPORARY_REDIRECT
         return res
     
-
 class UserActivationTokenGenerator:
     """
     A class to generate tokens for user activation.

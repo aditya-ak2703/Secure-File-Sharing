@@ -13,6 +13,8 @@ services:
       - "5678:5678"
     environment:
       - PYTHONUNBUFFERED=1
+      - ORIGIN=https://localhost:5433/api/
+      - PROXY_PREFIX=/api
 
   secure_file_ui:
     build:
@@ -28,5 +30,5 @@ services:
       context: nginx
       dockerfile: dockerfile.local
     ports:
-      - "5001:80"
-      
+      - "5080:80"
+      - "5443:443"

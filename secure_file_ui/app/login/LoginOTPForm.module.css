@@ -1,0 +1,5 @@
+input.cus-number-input::-webkit-outer-spin-button,
+input.cus-number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'users',
+    'files',
 ]
 
 MIDDLEWARE = [
@@ -147,7 +148,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL='refresh'
+PROXY_PREFIX = os.environ.get('PROXY_PREFIX', '')
+
+LOGIN_URL=f'{PROXY_PREFIX}/users/refresh/'
 
 SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': auth_settings.REFRESH_TOKEN_LIFETIME,
