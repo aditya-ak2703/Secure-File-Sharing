@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
+import { decrypt, encrypt } from '@/common';
 
 export interface FileUploadDialogProps {
     open: boolean;
@@ -16,9 +17,10 @@ const FileUploadDialog = ({ open, onClose }: FileUploadDialogProps) => {
     setFile(file);
 
     const reader = new FileReader();
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
         const base64String = (reader.result as any)?.split(',')[1];
-        setBase64(base64String);
+        const res = await encrypt(base64String);
+        setBase64(JSON.stringify(res));
     };
     reader.readAsDataURL(file);
   };

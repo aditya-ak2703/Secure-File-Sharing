@@ -11,13 +11,16 @@ import { FILE_PERMISION, IFile, ISharableLink } from "@/models/file";
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
+import { decrypt } from "@/common";
 
 
 function FileDisaply({file, detials}: {file: IFile, detials: ISharableLink}) {
 
-    function downloadFile() {
+    async function downloadFile() {
+        const parsed = JSON.parse(file.content);
+        const base64 = await decrypt(parsed.cipher, parsed.iv);
         const el = document.createElement("a");
-        el.href = "data:image/png;base64," + file.content;
+        el.href = "data:image/png;base64," + base64;
         el.download = file.fileName;
         el.click();
     }
